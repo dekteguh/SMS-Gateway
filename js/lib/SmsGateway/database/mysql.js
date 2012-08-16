@@ -3,6 +3,8 @@ var mysql  = require('mysql'),
 
 var db = {};
 
+module.exports = db;
+
 db.client = mysql.createClient({
         user:     config.user,
         password: config.password

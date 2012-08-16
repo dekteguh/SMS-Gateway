@@ -1,0 +1,17 @@
+{
+  "author": "Maik Kulbe",
+  "name": "SmsGateway",
+  "description": "SMS Gateway for gammu-smsd",
+  "version": "0.0.0",
+  "homepage": "http://www.linux-web-development.de",
+  "repository": {
+    "type": "git",
+    "url": "git://github.com/mkzero/SMS-Gateway.git"
+  },
+  "dependencies": {},
+  "devDependencies": {},
+  "optionalDependencies": {},
+  "engines": {
+    "node": "*"
+  }
+}
