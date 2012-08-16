@@ -1,13 +1,14 @@
 <?php
 
-namespace \SmsGateway;
+namespace \SmsGateway\Database;
 
 require 'exception.php';
+require 'abstract.php';
 
-class db {
+class Mysql extents \SmsGateway\Database\Abstract {
 	private $dbinstance,
 		$instance,
-		
+
 		$creatorTag     = 'SmsGateway 0.1.0';
 
 	/**
@@ -17,16 +18,18 @@ class db {
 	 * @param	string	$dbpass
 	 * @param	string	$dbhost
 	 * @param	string	$dbport
-	 * @param	string	$dbsocket
+     * @param	string	$dbsocket
+     *
+     * @throws \SmsGateway\Database\Exception
 	 */
 	protected function __construct ($dbname, $dbuser, $dbpass, 
 					$dbhost = 'localhost', $dbport = 3306, 
 					$dbsocket = null) {
 		$this->dbinstance = new mysqli($dbhost, $dbuser, $dbpass, 
 						$dbname, $dbport, $dbsocket);
-					
+
 		if ($this->dbinstance->connect_error) {
-			throw new Exception("Connect error");
+			throw new \SmsGateway\Database\Exception("Connect error");
 		}
 	}
 
@@ -46,7 +49,7 @@ class db {
 					$dbpass = null, $dbhost = 'localhost', 
 					$dbport = 3306,	$dbsocket = null) {
 		if (self::$instance === null) {
-			self::$instance = new \SmsGateway\db(
+			self::$instance = new \SmsGateway\Database\db(
 						$dbhost, $dbuser, $dbpass,
 						$dbname, $dbport, $dbsocket
 					);
