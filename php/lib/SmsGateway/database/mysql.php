@@ -1,14 +1,12 @@
 <?php
 
-namespace \SmsGateway;
+namespace \SmsGateway\Database;
 
 require 'exception.php';
+require 'abstract.php';
 
-class db {
-	private $dbinstance,
-		$instance,
-		
-		$creatorTag     = 'SmsGateway 0.1.0';
+class Mysql extents \SmsGateway\Database\DbAbstract {
+	private $creatorTag = 'SmsGateway 0.1.0';
 
 	/**
 	 *
@@ -17,16 +15,31 @@ class db {
 	 * @param	string	$dbpass
 	 * @param	string	$dbhost
 	 * @param	string	$dbport
-	 * @param	string	$dbsocket
+     * @param	string	$dbsocket
+     *
+     * @throws \SmsGateway\Database\Exception
 	 */
-	protected function __construct ($dbname, $dbuser, $dbpass, 
-					$dbhost = 'localhost', $dbport = 3306, 
-					$dbsocket = null) {
-		$this->dbinstance = new mysqli($dbhost, $dbuser, $dbpass, 
-						$dbname, $dbport, $dbsocket);
-					
+	protected function __construct ($config) {
+        if (!$config['dbhost']) {
+            $config['dbhost'] = 'localhost';
+        }
+
+        if (!$config['dbport']) {
+            $config['dbport'] = 3306;
+        }
+
+        if (!$config['dbsocket']) {
+            $config['dbsocket'] = null;
+        }
+
+        $this->dbinstance = new mysqli(
+            $config['dbhost'], $config['dbuser'}, 
+            $config['dbpass'], $config['dbname'],
+            $config['dbport'], $config['dbsocket']
+        );
+
 		if ($this->dbinstance->connect_error) {
-			throw new Exception("Connect error");
+			throw new \SmsGateway\Database\DbException("Connect error");
 		}
 	}
 
@@ -42,29 +55,12 @@ class db {
 	 */
 	protected function __clone () {}
 
-	public function get_instance ($dbname = null, $dbuser = null, 
-					$dbpass = null, $dbhost = 'localhost', 
-					$dbport = 3306,	$dbsocket = null) {
-		if (self::$instance === null) {
-			self::$instance = new \SmsGateway\db(
-						$dbhost, $dbuser, $dbpass,
-						$dbname, $dbport, $dbsocket
-					);
-		}
-
-		return self::$instance;
-	}
-
 	/**
 	 * Splits up long messages into message parts.
 	 *
 	 * @param	string	&$text
 	 * @param	array	&$sequences
 	 */
-	protected function split_sms (&$text, &$sequences) {
-		$sequences = str_split(substr($text, 160), 140);
-		$text      = substr($text, 0, 160);
-	}
 
 	/**
 	 * @param	string	$receiver
@@ -114,7 +110,7 @@ class db {
 	 * @param	int	$limit
 	 * @param	int	$offset
 	 */
-	public function list_sent_sms ($limit = 20, offset = 0) {
+	public function list_sent_sms ($limit = 20, $offset = 0) {
 		$query     = "SELECT `ID`, `ReceivingDateTime`, `TextDecoded`,
 					`SenderNumber`
 				FROM inbox
