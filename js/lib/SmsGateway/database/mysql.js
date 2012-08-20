@@ -1,9 +1,13 @@
-var mysql  = require('mysql'),
-    config = require('config');
+var mysql  = require('mysql');
 
-var db = {};
+var db = {},
+    config;
 
 module.exports = db;
+
+db.setConfig = function (conf) {
+    config = conf;
+};
 
 db.client = mysql.createClient({
         user:     config.user,
@@ -24,5 +28,4 @@ db.sendSms = function (receiver, text, flash, time, report) {
     if (report === null) {
         report = 'default';
     }
-
 }
